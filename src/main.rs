@@ -29,7 +29,7 @@ fn main() {
     let pattern = args.value_of("pattern").unwrap();
     let re = Regex::new(pattern).unwrap();
 
-    let input = args.value_of("input").unwrap();
+    let input = args.value_of("input").unwrap_or("-");
 
     if input == "-" {
         let stdin = io::stdin();
@@ -43,8 +43,8 @@ fn main() {
 }
 
 fn process_lines<T: BufRead + Sized>(reader: T, re: Regex) {
-    for line in reader.lines() {
-        let line = line.unwrap();
+    for line_ in reader.lines() {
+        let line = line_.unwrap();
         match re.find(&line) {
             Some(_) => println!("{}", line),
             None => (),
