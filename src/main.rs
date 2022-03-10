@@ -11,13 +11,17 @@ fn main() {
         .arg(
             Arg::with_name("pattern")
                 .help("Pattern to search for")
+                .short("p")
+                .value_name("regex")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
             Arg::with_name("input")
                 .help("File to search for")
+                .short("f")
                 .takes_value(true)
+                .allow_hyphen_values(true)
                 .required(true),
         )
         .get_matches();
