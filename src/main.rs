@@ -1,6 +1,7 @@
 use clap::{App, Arg};
 use regex::Regex;
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 use std::io::BufReader;
 
@@ -22,17 +23,26 @@ fn main() {
                 .short("f")
                 .takes_value(true)
                 .allow_hyphen_values(true)
-                .required(true),
+                .required(false),
         )
         .get_matches();
     let pattern = args.value_of("pattern").unwrap();
     let re = Regex::new(pattern).unwrap();
 
     let input = args.value_of("input").unwrap();
-    let f = File::open(input).unwrap();
 
-    let reader = BufReader::new(f);
+    if input == "-" {
+        let stdin = io::stdin();
+        let reader = stdin.lock();
+        process_lines(reader, re);
+    } else {
+        let f = File::open(input).unwrap();
+        let reader = BufReader::new(f);
+        process_lines(reader, re);
+    }
+}
 
+fn process_lines<T: BufRead + Sized>(reader: T, re: Regex) {
     for line in reader.lines() {
         let line = line.unwrap();
         match re.find(&line) {
